@@ -1,0 +1,1 @@
+Move all directories inside `library` directory into Arduino's library directory.
