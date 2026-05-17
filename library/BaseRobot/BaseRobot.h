@@ -15,23 +15,19 @@ enum TransitionType {
 enum Direction {
     NONE, // May use for stop
     FRONT,
-    // FRONT_LEFT,
     LEFT,
-    // BACK_LEFT,
     BACK,
-    // BACK_RIGHT,
     RIGHT
-    // FRONT_RIGHT
 };
 
 // C++ type replacements
-struct irActivation {
+struct IrActivations {
     bool flActivation;
     bool frActivation;
     bool rlActivation;
     bool rrActivation;
 };
-struct wheelDirections {
+struct WheelDirections {
     int flDirection;
     int frDirection;
     int rlDirection;
@@ -39,7 +35,7 @@ struct wheelDirections {
 };
 
 // Component
-struct irArray {
+struct IrArray {
     // Hold the pin correspond to each ir
     int fl = 7; // Front left
     int fr = 6; // Front right
@@ -63,7 +59,7 @@ class BaseRobot {
         EXPANSION exc;
 
         // IR Sensor
-        irArray irArrayPins;
+        IrArray irArrayPins;
         bool isIrActivateHigh;
 
         // Wheels (ID, Channel)
@@ -77,21 +73,31 @@ class BaseRobot {
         // Base constructor function
         void baseConstructor();
 
-        // IR function
-        irActivation readIr();
+        // IR functions
+        IrActivations readIr();
         Direction mapIrToDirection();
 
-        // Movement function
+        // Movement functions
+        WheelDirections mapWheelPositionDirection(Direction direction);
+        void calibrateMove();
+
+        // Rotation functions
+        WheelDirections mapWheelRotationDirection(Direction direction);
+
+        // Experiment functions
         float mapTransition(float input, TransitionType transitionType);
         int projectTransitionToSpeed(Wheel wheel, unsigned int speed, int target, TransitionType transitionType);
+    public:
+        BaseRobot();
+        BaseRobot(bool irActivateHigh, IrArray irArrayPins, Wheels wheels);
 
-        wheelDirections mapWheelDirection(Direction direction);
+        // Movement functions
         void move(unsigned int speed, Direction direction);
         void moveUntilBlack(unsigned int speed, Direction direction);
 
-        void calibrateMove();
-    public:
-        BaseRobot();
-        BaseRobot(bool irActivateHigh, irArray irArrayPins, Wheels wheels);
+        // Rotation functions
+        void rotate(unsigned int speed, Direction Direction);
+
+        // Experiment functions
         void transitionMove(unsigned int speed, int target, TransitionType transitionType, float error = 0.1);
 };

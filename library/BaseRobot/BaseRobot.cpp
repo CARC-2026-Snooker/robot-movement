@@ -17,41 +17,92 @@ BaseRobot::BaseRobot()
     : isIrActivateHigh(true) {
     baseConstructor();
 }
-BaseRobot::BaseRobot(bool irActivateHigh, irArray irArrayPins, Wheels wheels)
+BaseRobot::BaseRobot(bool irActivateHigh, IrArray irArrayPins, Wheels wheels)
     : isIrActivateHigh(irActivateHigh), irArrayPins(irArrayPins), wheels(wheels) {
     baseConstructor();
 }
 
-// IR helper function
-irActivation BaseRobot::readIr() {
+// IR functions
+IrActivations BaseRobot::readIr() {
     // Return whether each IR is activated. If it is activated the value will be true.
     // Fl, Fr, Rl, Rr is the position of each ir in the tuple.
-    irActivation out = {
+    return {
         digitalRead(irArrayPins.fl) == isIrActivateHigh,
         digitalRead(irArrayPins.fr) == isIrActivateHigh,
         digitalRead(irArrayPins.rl) == isIrActivateHigh,
         digitalRead(irArrayPins.rr) == isIrActivateHigh
     };
-    return out;
 }
 Direction BaseRobot::mapIrToDirection() {
     // Map the IR value combination to the direction of the black line.
     // If there imbalance in IR activation (เอียง), Direction::NONE will be return.
-    irActivation irRead = readIr();
+    IrActivations irRead = readIr();
     int leftActivationWeight = irRead.flActivation + irRead.rlActivation;
     int rightActivationWeight = irRead.frActivation + irRead.rrActivation;
 
     if (leftActivationWeight == rightActivationWeight && leftActivationWeight != 0) {
         return Direction::FRONT;
-    } else if (leftActivationWeight == 2 && rightActivationWeight == 0) {
+    } else if (leftActivationWeight < rightActivationWeight) {
         return Direction::LEFT;
-    } else if (leftActivationWeight == 0 && rightActivationWeight == 2) {
+    } else if (leftActivationWeight > rightActivationWeight) {
         return Direction::RIGHT;
     }
     return Direction::NONE;
 }
 
-// Movement helper function
+// Movement functions
+WheelDirections BaseRobot::mapWheelPositionDirection(Direction direction) {
+    // Map position movement direction down into multiplier of each motor.
+    switch (direction) {
+        case Direction::FRONT:
+            return {-1, -1, 1, 1};
+        case Direction::LEFT:
+            return {1, -1, 1, -1};
+        case Direction::BACK:
+            return {1, 1, -1, -1};
+        case Direction::RIGHT:
+            return {-1, 1, -1, 1};
+    }
+    return {};
+}
+void BaseRobot::calibrateMove() {
+    moveUntilBlack(50, Direction::FRONT);
+    moveUntilBlack(50, Direction::LEFT);
+}
+void BaseRobot::move(unsigned int speed, Direction direction) {
+    WheelDirections wheelDirection = mapWheelPositionDirection(direction);
+    exc.setMotorSpeed(wheelFl.id, wheelFl.channel, speed * wheelDirection.flDirection);
+    exc.setMotorSpeed(wheelFr.id, wheelFr.channel, speed * wheelDirection.frDirection);
+    exc.setMotorSpeed(wheelRl.id, wheelRl.channel, speed * wheelDirection.rlDirection);
+    exc.setMotorSpeed(wheelRr.id, wheelRr.channel, speed * wheelDirection.rrDirection);
+}
+void BaseRobot::moveUntilBlack(unsigned int speed, Direction direction) {
+    move(speed, direction);
+    while (mapIrToDirection() != direction);
+    move(0, direction);
+}
+
+// Rotation functions
+WheelDirections BaseRobot::mapWheelRotationDirection(Direction direction) {
+    // Map rotation direction down into multiplier of each motor.
+    switch (direction) {
+        case Direction::LEFT:
+            return {1, 1, 1, 1};
+        case Direction::RIGHT:
+            return {-1, -1, -1, -1};
+    }
+    return {}; 
+}
+void BaseRobot::rotate(unsigned int speed, Direction direction) {
+    WheelDirections wheelDirection = mapWheelRotationDirection(direction); 
+    exc.setMotorTarget(wheelFl.id, wheelFl.channel, speed * wheelDirection.flDirection, 1440);
+    exc.setMotorTarget(wheelFr.id, wheelFr.channel, speed * wheelDirection.frDirection, 1440);
+    exc.setMotorTarget(wheelRl.id, wheelRl.channel, speed * wheelDirection.rlDirection, 1440);
+    exc.setMotorTarget(wheelRr.id, wheelRr.channel, speed * wheelDirection.rrDirection, 1440);
+    delay(ceil(1440 / speed) * 1000);
+}
+
+// Experiment functions
 float BaseRobot::mapTransition(float input, TransitionType transitionType) {
     // Input between 0 to 1
 
@@ -83,39 +134,6 @@ int BaseRobot::projectTransitionToSpeed(Wheel wheel, unsigned int speed, int tar
     float transitionPosition = mapTransition(currentReading / target, transitionType);
     return floor(transitionPosition * speed);
 }
-
-wheelDirections BaseRobot::mapWheelDirection(Direction direction) {
-    // Map directory down into multiplier of each motor.
-    // Fl, Fr, Rl, Rr
-    switch (direction) {
-        case Direction::FRONT:
-            return wheelDirections({-1, -1, 1, 1});
-        case Direction::LEFT:
-            return wheelDirections({1, -1, 1, -1});
-        case Direction::BACK:
-            return wheelDirections({1, 1, -1, -1});
-        case Direction::RIGHT:
-            return wheelDirections({-1, 1, -1, 1});
-    }
-}
-void BaseRobot::move(unsigned int speed, Direction direction) {
-    wheelDirections wheelDirection = mapWheelDirection(direction);
-    exc.setMotorSpeed(wheelFl.id, wheelFl.channel, speed * wheelDirection.flDirection);
-    exc.setMotorSpeed(wheelFr.id, wheelFr.channel, speed * wheelDirection.frDirection);
-    exc.setMotorSpeed(wheelRl.id, wheelRl.channel, speed * wheelDirection.rlDirection);
-    exc.setMotorSpeed(wheelRr.id, wheelRr.channel, speed * wheelDirection.rrDirection);
-}
-void BaseRobot::moveUntilBlack(unsigned int speed, Direction direction) {
-    move(speed, direction);
-    while (mapIrToDirection() != direction);
-    move(0, direction);
-}
-void BaseRobot::calibrateMove() {
-    moveUntilBlack(50, Direction::FRONT);
-    moveUntilBlack(50, Direction::LEFT);
-}
-
-// Public function
 void BaseRobot::transitionMove(unsigned int speed, int target, TransitionType transitionType, float error) {
     // Continuously calling projectSpeedToTransition, blocking all code execution.
     // while (exc.readServoPosition() > target * (1 + error) || exc.readServoPosition() < target * (1 - error)) {
