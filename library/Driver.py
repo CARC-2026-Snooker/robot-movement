@@ -214,8 +214,8 @@ if __name__ == "__main__":
     # print(servo_driver.ReadBatteryVoltage())
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
-    left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 100)
-    # spin_wheel_driver.SetMotorSpeed(SpinWheelPosition.LEFT, 100)
+    # left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 100)
+    spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
     sleep(10)
 
     serial.close()
