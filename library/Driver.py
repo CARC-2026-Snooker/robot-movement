@@ -32,7 +32,7 @@ class Driver():
         MotorSpeedCheck(speed)
 
         command = 0x43 + wheel.value - 1
-        package = DataPackage(bytes(5), bytes(0x43), bytes(100))
+        package = DataPackage(self.address, command, speed)
         package.Sent(self.port)
     def SetMotorSpeeds(self, speed_1 : int, speed_2 : int):
         MotorSpeedCheck(speed_1)
