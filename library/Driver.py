@@ -218,7 +218,7 @@ if __name__ == "__main__":
     # spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
     print("@@d".encode('utf-8'))
     serial.write("@@d".encode('utf-8'))
-    print("sent")
+    print(int("@".encode('utf-8')))
     sleep(10)
 
     serial.close()
