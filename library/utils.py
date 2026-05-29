@@ -1,5 +1,5 @@
 from enum import Enum
-from smbus2 import SMBus
+from serial import Serial
 
 # Bit computation
 def LowByte(number : int):
@@ -7,47 +7,54 @@ def LowByte(number : int):
 def HighByte(number : int):
     return number >> 24 & 0xFF
 
-# Board Communication
-PRIZM_MOTOR_ADDRESS = 5
-PRIZM_SERVO_ADDRESS = 6
-COMMUNICATION_PAUSE = 0.01 # Mimic the delay(10) of PRIZM's library
-def ReadAddress():
-    # Read the connected board address, please connect only one board at a time
-    address = None
-    
-    with SMBus(1) as bus:
-        for i in range(120):
-            # PRIZM ignore
-            if i == PRIZM_MOTOR_ADDRESS or i == PRIZM_SERVO_ADDRESS:
-                continue
-            
-            try:
-                bus.write_byte(i, 0)
-            except:
-                pass
-            else:
-                address = i
-
-    return address
-
-# Board Driver
-class Wheel(Enum):
+# Driver Board
+class COMPONENT(Enum):
+    LEFT_MOTOR_DRIVER = 1
+    RIGHT_MOTOR_DRIVER = 2
+    SERVO_DRIVER = 4
+    PRIZM_MOTOR_DRIVER = 5
+    PRIZM_SERVO_DRIVER = 6
+class WheelPosition(Enum):
     FRONT = 1
     REAR = 2
 
+# Data comunication
+class DataPackage():
+    def __init__(self, address, command, *args):
+        self.address = address
+        self.command = command
+        self.args = args
+
+    def Sent(self, port : Serial, return_bytes : int = 0):
+        package = [self.address, self.command, *self.args]
+        for data in package:
+            port.write(data)
+        return port.read(return_bytes)
+
+
 # Illegal value checking
-def ChannelCheck(channel : int):
+def MotorChannelCheck(channel : int):
     if channel != 1 and channel != 2:
         raise Exception("Channel out of range.")
-def PowerCheck(power : int):
+def MotorPowerCheck(power : int):
     if (power > 100 or power < -100) and power != 125:
         raise Exception("Power out of range.")
-def SpeedCheck(speed : int):
+def MotorSpeedCheck(speed : int):
     if speed > 720 or speed < -720:
         raise Exception("Speed out of range.")
-def AbsSpeedCheck(degree : int):
+def MotorAbsSpeedCheck(degree : int):
     if degree > 720 or degree < 0:
         raise Exception("Speed out of range.") 
-def InvertCheck(invert : int):
+def MotorInvertCheck(invert : int):
     if invert != 1 and invert != 0:
         raise Exception("Invalid invert value.")
+    
+def ServoChannelCheck(channel : int):
+    if channel < 1 and channel > 6:
+        raise Exception("Channel out of range.")
+def ServoSpeedCheck(speed : int):
+    if speed > 100 or speed < 0:
+        raise Exception("Speed out of range.")
+def ServoPositionCheck(position : int):
+    if position > 180 or position < 0:
+        raise Exception("Position out of range.")

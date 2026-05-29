@@ -5,4 +5,4 @@ lib_dir = Path(__file__).resolve().parent.parent
 if str(lib_dir) not in sys.path:
     sys.path.append(str(lib_dir))
 
-from library import MotorBoard, ServoBoad, PrizmBoard
+from library import Driver, ServoBoad, PrizmBoard
