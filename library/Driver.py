@@ -215,6 +215,7 @@ if __name__ == "__main__":
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
     left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 5)
+    spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
     print("sent")
     sleep(10)
 
