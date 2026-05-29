@@ -35,7 +35,9 @@ class DataPackage():
         package = [self.address, self.command, *self.args]
         for data in package:
             port.write(data)
-        return port.read(return_bytes)
+        if return_bytes > 0:
+            return port.read(return_bytes)
+        return None
 
 
 # Illegal value checking
