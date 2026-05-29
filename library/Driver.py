@@ -219,7 +219,7 @@ if __name__ == "__main__":
     byteArr = bytearray(b'@@d')
     print(byteArr)
     print(byteArr[0])
-    serial.write(byteArr)
+    serial.write(b'\x40\x40\x64')
     sleep(10)
 
     serial.close()
