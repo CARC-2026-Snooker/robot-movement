@@ -34,7 +34,7 @@ class DataPackage():
     def Sent(self, port : Serial, return_bytes : int = 0):
         package = [self.address, self.command, *self.args]
         for data in package:
-            port.write(data.to_bytes(1, byteorder='big'))
+            port.write(data)
         if return_bytes > 0:
             return port.read(return_bytes)
         return None
