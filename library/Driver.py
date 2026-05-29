@@ -200,13 +200,15 @@ class Driver():
 
 # Test section
 if __name__ == "__main__":
-    serial = Serial("/dev/ttyUSB0", baudrate=1000000)
+    serial = Serial("/dev/ttyUSB0", baudrate=1000000, timeout=1)
     left_motor_driver = Driver(COMPONENT.LEFT_MOTOR_DRIVER, serial)
     right_motor_driver = Driver(COMPONENT.RIGHT_MOTOR_DRIVER, serial)
     servo_driver = Driver(COMPONENT.SERVO_DRIVER, serial)
     spin_wheel_driver = Driver(COMPONENT.PRIZM_MOTOR_DRIVER, serial)
 
-    print(left_motor_driver.ReadBatteryVoltage())
-    print(right_motor_driver.ReadBatteryVoltage())
-    print(servo_driver.ReadBatteryVoltage())
-    print(spin_wheel_driver.ReadBatteryVoltage())
+    # print(left_motor_driver.ReadBatteryVoltage())
+    # print(right_motor_driver.ReadBatteryVoltage())
+    # print(servo_driver.ReadBatteryVoltage())
+    # print(spin_wheel_driver.ReadBatteryVoltage())
+
+    spin_wheel_driver.SetMotorSpeed(SpinWheelPosition.LEFT, 10)
