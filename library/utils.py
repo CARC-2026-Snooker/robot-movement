@@ -21,8 +21,8 @@ class SpinWheelPosition(Enum):
     LEFT = 1
     RIGHT = 2
 class ServoPosition(Enum):
-    TRIGGER = 1
-    CLAW = 2
+    CLAW = 1
+    TRIGGER = 2
 
 # Data comunication
 class DataPackage():
