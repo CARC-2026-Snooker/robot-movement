@@ -218,3 +218,4 @@ if __name__ == "__main__":
     left_motor_driver.SetMotorPower(WheelPosition.FRONT, 100)
     left_motor_driver.SetMotorPower(WheelPosition.REAR, 100)
     print("sent")
+    sleep(5)
