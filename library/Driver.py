@@ -215,7 +215,9 @@ if __name__ == "__main__":
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
     # left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 100)
-    spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
+    # spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
+    serial.write("@@d")
+    print("sent")
     sleep(10)
 
     serial.close()
