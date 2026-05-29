@@ -1,5 +1,6 @@
 from serial import Serial
 from utils import *
+from time import sleep
 
 class Driver():
     def __init__(self, component : COMPONENT, port : Serial):
@@ -211,4 +212,5 @@ if __name__ == "__main__":
     # print(servo_driver.ReadBatteryVoltage())
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
-    spin_wheel_driver.SetMotorSpeed(SpinWheelPosition.LEFT, 10)
+    spin_wheel_driver.SetMotorSpeed(SpinWheelPosition.LEFT, 100)
+    sleep(10)
