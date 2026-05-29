@@ -220,9 +220,11 @@ if __name__ == "__main__":
     right_motor_driver.SetMotorPower(WheelPosition.FRONT, 15)
     right_motor_driver.SetMotorPower(WheelPosition.REAR, 15)
     servo_driver.SetServoSpeed(ServoPosition.CLAW, 100)
-    servo_driver.SetServoPosition(ServoPosition.CLAW, 20)
+    # servo_driver.SetServoPosition(ServoPosition.CLAW, 20)
+    servo_driver.SetServoPosition(ServoPosition.CLAW, 140)
     servo_driver.SetServoSpeed(ServoPosition.TRIGGER, 100)
-    servo_driver.SetServoPosition(ServoPosition.TRIGGER, 150)
+    # servo_driver.SetServoPosition(ServoPosition.TRIGGER, 150)
+    servo_driver.SetServoPosition(ServoPosition.TRIGGER, 90)
     print("sent")
     sleep(5)
 
