@@ -206,7 +206,7 @@ if __name__ == "__main__":
 
     left_motor_driver = Driver(COMPONENT.LEFT_MOTOR_DRIVER, serial)
     right_motor_driver = Driver(COMPONENT.RIGHT_MOTOR_DRIVER, serial)
-    servo_driver = Driver(COMPONENT.SERVO_DRIVER, serial)
+    servo_driver = Driver(COMPONENT.PRIZM_SERVO_DRIVER, serial)
     spin_wheel_driver = Driver(COMPONENT.PRIZM_MOTOR_DRIVER, serial)
 
     # print(left_motor_driver.ReadBatteryVoltage())
