@@ -17,6 +17,12 @@ class COMPONENT(Enum):
 class WheelPosition(Enum):
     FRONT = 1
     REAR = 2
+class SpinWheelPosition(Enum):
+    LEFT = 1
+    RIGHT = 2
+class ServoPosition(Enum):
+    TRIGGER = 1
+    CLAW = 2
 
 # Data comunication
 class DataPackage():
@@ -34,7 +40,7 @@ class DataPackage():
 
 # Illegal value checking
 def MotorChannelCheck(channel : int):
-    if channel != 1 and channel != 2:
+    if channel.value != 1 and channel.value != 2:
         raise Exception("Channel out of range.")
 def MotorPowerCheck(power : int):
     if (power > 100 or power < -100) and power != 125:

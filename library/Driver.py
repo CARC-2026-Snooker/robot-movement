@@ -3,7 +3,7 @@ from utils import *
 
 class Driver():
     def __init__(self, component : COMPONENT, port : Serial):
-        self.address = component
+        self.address = component.value
         self.port = port
 
     def ReadBatteryVoltage(self):
@@ -14,10 +14,10 @@ class Driver():
     # =====================
     # Motor
     # =====================
-    def SetMotorPower(self, wheel : WheelPosition, power : int):
+    def SetMotorPower(self, wheel : WheelPosition | SpinWheelPosition, power : int):
         MotorPowerCheck(power)
 
-        command = 0x40 + wheel - 1
+        command = 0x40 + wheel.value - 1
         package = DataPackage(self.address, command, power)
         package.Sent(self.port)
     def SetMotorPowers(self, power_1 : int, power_2 : int):
@@ -27,10 +27,10 @@ class Driver():
         package = DataPackage(self.address, 0x42, power_1, power_2)
         package.Sent(self.port)
 
-    def SetMotorSpeed(self, wheel : WheelPosition, speed : int):
+    def SetMotorSpeed(self, wheel : WheelPosition | SpinWheelPosition, speed : int):
         MotorSpeedCheck(speed)
 
-        command = 0x43 + wheel - 1
+        command = 0x43 + wheel.value - 1
         package = DataPackage(self.address, command, speed)
         package.Sent(self.port)
     def SetMotorSpeeds(self, speed_1 : int, speed_2 : int):
@@ -40,10 +40,10 @@ class Driver():
         package = DataPackage(self.address, 0x45, speed_1, speed_2)
         package.Sent(self.port)
 
-    def SetMotorTarget(self, wheel : WheelPosition, speed : int, target : int):
+    def SetMotorTarget(self, wheel : WheelPosition | SpinWheelPosition, speed : int, target : int):
         MotorAbsSpeedCheck(speed)
 
-        command = 0x46 + wheel - 1
+        command = 0x46 + wheel.value - 1
         arguments = [
             HighByte(speed),
             LowByte(speed),
@@ -77,10 +77,10 @@ class Driver():
         package = DataPackage(self.address, 0x48, *arguments_1.extend(arguments_2))
         package.Sent(self.port)
 
-    def SetMotorDegree(self, wheel : WheelPosition, speed : int, degree : int):
+    def SetMotorDegree(self, wheel : WheelPosition | SpinWheelPosition, speed : int, degree : int):
         MotorAbsSpeedCheck(speed)
 
-        command = 0x58 + wheel - 1
+        command = 0x58 + wheel.value - 1
         arguments = [
             HighByte(speed),
             LowByte(speed),
@@ -114,27 +114,26 @@ class Driver():
         package = DataPackage(self.address, 0x5A, *arguments_1.extend(arguments_2))
         package.Sent(self.port)
 
-    def SetMotorInvert(self, wheel : WheelPosition, invert : int):
+    def SetMotorInvert(self, wheel : WheelPosition | SpinWheelPosition, invert : int):
         MotorInvertCheck(invert)
 
-        command = 0x51 + wheel - 1
+        command = 0x51 + wheel.value - 1
         package = DataPackage(self.address, command, invert)
         package.Sent(self.port)
 
-    def ReadMotorBusy(self, wheel : WheelPosition):
+    def ReadMotorBusy(self, wheel : WheelPosition | SpinWheelPosition):
         # 1 = busy, 0 = target reached
-        command = 0x4F + wheel - 1
+        command = 0x4F + wheel.value - 1
         package = DataPackage(self.address, command)
         return package.Sent(self.port, 1)
 
     # =====================
     # Servo
     # =====================
-    def SetServoSpeed(self, channel : int, servo_speed : int):
-        ServoChannelCheck(channel)
+    def SetServoSpeed(self, servo : ServoPosition, servo_speed : int):
         ServoSpeedCheck(servo_speed)
 
-        command = 0x28 + channel - 1
+        command = 0x28 + servo.value - 1
         package = DataPackage(self.address, command, servo_speed)
         package.Sent(self.port)
     def SetServoSpeeds(
@@ -165,11 +164,10 @@ class Driver():
         )
         package.Sent()
 
-    def SetServoPosition(self, channel : int, servo_position : int):
-        ServoChannelCheck(channel)
+    def SetServoPosition(self, servo : ServoPosition, servo_position : int):
         ServoPositionCheck(servo_position)
 
-        command = 0x2F + channel - 1
+        command = 0x2F + servo.value - 1
         package = DataPackage(self.address, command, servo_position)
         package.Sent(self.port)
     def SetServoPositions(
@@ -202,10 +200,10 @@ class Driver():
 
 # Test section
 if __name__ == "__main__":
-    serial = Serial("", baudrate=1000000)
+    serial = Serial("/dev/ttyUSB0", baudrate=1000000)
     left_motor_driver = Driver(COMPONENT.LEFT_MOTOR_DRIVER, serial)
     right_motor_driver = Driver(COMPONENT.RIGHT_MOTOR_DRIVER, serial)
-    servo_driver = Driver(COMPONENT.PRIZM_SERVO_DRIVER, serial)
+    servo_driver = Driver(COMPONENT.SERVO_DRIVER, serial)
     spin_wheel_driver = Driver(COMPONENT.PRIZM_MOTOR_DRIVER, serial)
 
     print(left_motor_driver.ReadBatteryVoltage())
