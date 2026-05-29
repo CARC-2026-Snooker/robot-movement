@@ -216,9 +216,10 @@ if __name__ == "__main__":
 
     # left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 100)
     # spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
-    print("@@d".encode('utf-8'))
-    serial.write("@@d".encode('utf-8'))
-    print(int("@".encode('utf-8')))
+    byteArr = bytearray(b'@@d')
+    print(byteArr)
+    print(byteArr[0])
+    serial.write(byteArr)
     sleep(10)
 
     serial.close()
