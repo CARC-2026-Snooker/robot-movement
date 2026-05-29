@@ -214,12 +214,8 @@ if __name__ == "__main__":
     # print(servo_driver.ReadBatteryVoltage())
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
-    # left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 100)
-    spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
-    # byteArr = bytearray(b'@@d')
-    # print(byteArr)
-    # print(byteArr[0])
-    # serial.write(b'\x40\x40\x64')
+    left_motor_driver.SetMotorSpeed(WheelPosition.FRONT, 5)
+    print("sent")
     sleep(10)
 
     serial.close()
