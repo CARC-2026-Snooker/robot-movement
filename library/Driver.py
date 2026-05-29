@@ -221,3 +221,5 @@ if __name__ == "__main__":
     right_motor_driver.SetMotorPower(WheelPosition.REAR, 100)
     print("sent")
     sleep(5)
+
+    serial.close()
