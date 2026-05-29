@@ -202,7 +202,7 @@ class Driver():
 # Test section
 if __name__ == "__main__":
     serial = Serial("/dev/ttyUSB0", baudrate=1000000, timeout=1)
-    sleep(5)
+    sleep(4)
 
     left_motor_driver = Driver(COMPONENT.LEFT_MOTOR_DRIVER, serial)
     right_motor_driver = Driver(COMPONENT.RIGHT_MOTOR_DRIVER, serial)
