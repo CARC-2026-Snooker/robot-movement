@@ -1,9 +1,55 @@
+from time import sleep
+from enum import Enum
 from serial import Serial
 from utils import *
-from time import sleep
+
+# Components and its positioning
+class Component(Enum):
+    LEFT_MOTOR_DRIVER = 1
+    RIGHT_MOTOR_DRIVER = 2
+    SERVO_DRIVER = 4
+    PRIZM_MOTOR_DRIVER = 5
+    PRIZM_SERVO_DRIVER = 6
+class WheelPosition(Enum):
+    FRONT = 1
+    REAR = 2
+class SpinWheelPosition(Enum):
+    LEFT = 1
+    RIGHT = 2
+class ServoPosition(Enum):
+    CLAW = 1
+    TRIGGER = 2
+
+# Illegal value checking
+def MotorChannelCheck(channel : int):
+    if channel.value != 1 and channel.value != 2:
+        raise Exception("Channel out of range.")
+def MotorPowerCheck(power : int):
+    if (power > 100 or power < -100) and power != 125:
+        raise Exception("Power out of range.")
+def MotorSpeedCheck(speed : int):
+    if speed > 720 or speed < -720:
+        raise Exception("Speed out of range.")
+def MotorAbsSpeedCheck(degree : int):
+    if degree > 720 or degree < 0:
+        raise Exception("Speed out of range.") 
+def MotorInvertCheck(invert : int):
+    if invert != 1 and invert != 0:
+        raise Exception("Invalid invert value.")
+    
+def ServoChannelCheck(channel : int):
+    if channel < 1 and channel > 6:
+        raise Exception("Channel out of range.")
+def ServoSpeedCheck(speed : int):
+    if speed > 100 or speed < 0:
+        raise Exception("Speed out of range.")
+def ServoPositionCheck(position : int):
+    if position > 180 or position < 0:
+        raise Exception("Position out of range.")
+
 
 class Driver():
-    def __init__(self, component : COMPONENT, port : Serial):
+    def __init__(self, component : Component, port : Serial):
         self.address = component.value
         self.port = port
 
@@ -204,10 +250,10 @@ if __name__ == "__main__":
     serial = Serial("/dev/ttyUSB0", baudrate=1000000, timeout=1)
     sleep(4)
 
-    left_motor_driver = Driver(COMPONENT.LEFT_MOTOR_DRIVER, serial)
-    right_motor_driver = Driver(COMPONENT.RIGHT_MOTOR_DRIVER, serial)
-    servo_driver = Driver(COMPONENT.PRIZM_SERVO_DRIVER, serial)
-    spin_wheel_driver = Driver(COMPONENT.PRIZM_MOTOR_DRIVER, serial)
+    left_motor_driver = Driver(Component.LEFT_MOTOR_DRIVER, serial)
+    right_motor_driver = Driver(Component.RIGHT_MOTOR_DRIVER, serial)
+    servo_driver = Driver(Component.PRIZM_SERVO_DRIVER, serial)
+    spin_wheel_driver = Driver(Component.PRIZM_MOTOR_DRIVER, serial)
 
     # print(left_motor_driver.ReadBatteryVoltage())
     # print(right_motor_driver.ReadBatteryVoltage())
@@ -219,12 +265,14 @@ if __name__ == "__main__":
     left_motor_driver.SetMotorPower(WheelPosition.REAR, 15)
     right_motor_driver.SetMotorPower(WheelPosition.FRONT, 15)
     right_motor_driver.SetMotorPower(WheelPosition.REAR, 15)
-    servo_driver.SetServoSpeed(ServoPosition.CLAW, 100)
+
     # servo_driver.SetServoPosition(ServoPosition.CLAW, 20)
-    servo_driver.SetServoPosition(ServoPosition.CLAW, 140)
-    servo_driver.SetServoSpeed(ServoPosition.TRIGGER, 100)
+    # servo_driver.SetServoPosition(ServoPosition.CLAW, 140)
+
     # servo_driver.SetServoPosition(ServoPosition.TRIGGER, 150)
-    servo_driver.SetServoPosition(ServoPosition.TRIGGER, 90)
+    sleep(1)
+    # servo_driver.SetServoPosition(ServoPosition.TRIGGER, 90)
+    
     print("sent")
     sleep(5)
 
