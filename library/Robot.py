@@ -45,8 +45,18 @@ class Robot():
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
-    def Rotate(self):
-        pass
+    def Rotate(self, power : int, rotation : Rotation):
+        self.left_wheel_driver.ResetEncdoers()
+        self.right_wheel_driver.ResetEncdoers()
+        
+        multiplier = MapRotationToWheel(rotation)
+        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[1])
+        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[2])
+        
+        degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
+        while abs(degree) < 90:
+            degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
+        self.Break() 
 
     def OpenClaw(self):
         servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
@@ -68,19 +78,28 @@ class Robot():
 
 # Test section
 if __name__ == "__main__":
-    constant_speed = 10
+    constant_power = 10
     move_time = 1
 
     robot = Robot()
-    robot.Move(constant_speed, Direction.FRONT)
+    robot.Move(constant_power, Direction.FRONT)
     sleep(move_time)
-    robot.Move(constant_speed, Direction.LEFT)
+    robot.Move(constant_power, Direction.LEFT)
     sleep(move_time)
-    robot.Move(constant_speed, Direction.BACK)
+    robot.Move(constant_power, Direction.BACK)
     sleep(move_time)
-    robot.Move(constant_speed, Direction.RIGHT)
+    robot.Move(constant_power, Direction.RIGHT)
     sleep(move_time)
     robot.Break()
+
+    robot.Rotate(constant_power, Rotation.LEFT)
+    sleep(move_time)
+    robot.Rotate(constant_power, Rotation.RIGHT)
+    sleep(move_time)
+    robot.Rotate(constant_power, Rotation.LEFT)
+    sleep(move_time)
+    robot.Rotate(constant_power, Rotation.RIGHT)
+    sleep(move_time)
 
     robot.OpenClaw()
     sleep(move_time)

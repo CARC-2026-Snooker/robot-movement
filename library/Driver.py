@@ -175,6 +175,35 @@ class Driver():
         return package.Sent(self.port, 1)
 
     # =====================
+    # Encoder
+    # =====================
+    def ReadEncoderCount(self, wheel : WheelChannel):
+        command = 0x49 + wheel.value - 1
+        package = DataPackage(self.address, command)
+        data = package.Sent(self.port, 4)
+        count = data[0]
+        count = count * 256 + data[1]
+        count = count * 256 + data[2]
+        count = count * 256 + data[3]
+        return count
+    def ReadEncoderDegrees(self, wheel : WheelChannel):
+        command = 0x5B + wheel.value - 1
+        package = DataPackage(self.address, command)
+        data = package.Sent(self.port, 4)
+        degree = data[0]
+        degree = degree * 256 + data[1]
+        degree = degree * 256 + data[2]
+        degree = degree * 256 + data[3]
+        return degree
+    def ResetEncoder(self, wheel : WheelChannel):
+        command = 0x4C + wheel.value - 1
+        package = DataPackage(self.address, command)
+        package.Sent(self.port)
+    def ResetEncdoers(self):
+        package = DataPackage(self.address, 0x4E)
+        package.Sent(self.port)
+
+    # =====================
     # Servo
     # =====================
     def SetServoSpeed(self, servo : ServoChannel, servo_speed : int):
