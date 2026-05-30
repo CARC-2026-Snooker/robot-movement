@@ -10,17 +10,17 @@ class Component(Enum):
     SERVO_DRIVER = 4
     PRIZM_MOTOR_DRIVER = 5
     PRIZM_SERVO_DRIVER = 6
-class WheelPosition(Enum):
+class WheelChannel(Enum):
     FRONT = 1
     REAR = 2
-class SpinWheelPosition(Enum):
+class SpinWheelChannel(Enum):
     LEFT = 1
     RIGHT = 2
-class ServoPosition(Enum):
+class ServoChannel(Enum):
     CLAW = 1
     TRIGGER = 2
 
-# Illegal value checking
+# Illegal value checking helper functions
 def MotorChannelCheck(channel : int):
     if channel.value != 1 and channel.value != 2:
         raise Exception("Channel out of range.")
@@ -61,7 +61,7 @@ class Driver():
     # =====================
     # Motor
     # =====================
-    def SetMotorPower(self, wheel : WheelPosition | SpinWheelPosition, power : int):
+    def SetMotorPower(self, wheel : WheelChannel | SpinWheelChannel, power : int):
         MotorPowerCheck(power)
 
         command = 0x40 + wheel.value - 1
@@ -74,7 +74,7 @@ class Driver():
         package = DataPackage(self.address, 0x42, power_1, power_2)
         package.Sent(self.port)
 
-    def SetMotorSpeed(self, wheel : WheelPosition | SpinWheelPosition, speed : int):
+    def SetMotorSpeed(self, wheel : WheelChannel | SpinWheelChannel, speed : int):
         MotorSpeedCheck(speed)
 
         command = 0x43 + wheel.value - 1
@@ -87,7 +87,7 @@ class Driver():
         package = DataPackage(self.address, 0x45, speed_1, speed_2)
         package.Sent(self.port)
 
-    def SetMotorTarget(self, wheel : WheelPosition | SpinWheelPosition, speed : int, target : int):
+    def SetMotorTarget(self, wheel : WheelChannel | SpinWheelChannel, speed : int, target : int):
         MotorAbsSpeedCheck(speed)
 
         command = 0x46 + wheel.value - 1
@@ -124,7 +124,7 @@ class Driver():
         package = DataPackage(self.address, 0x48, *arguments_1.extend(arguments_2))
         package.Sent(self.port)
 
-    def SetMotorDegree(self, wheel : WheelPosition | SpinWheelPosition, speed : int, degree : int):
+    def SetMotorDegree(self, wheel : WheelChannel | SpinWheelChannel, speed : int, degree : int):
         MotorAbsSpeedCheck(speed)
 
         command = 0x58 + wheel.value - 1
@@ -161,14 +161,14 @@ class Driver():
         package = DataPackage(self.address, 0x5A, *arguments_1.extend(arguments_2))
         package.Sent(self.port)
 
-    def SetMotorInvert(self, wheel : WheelPosition | SpinWheelPosition, invert : int):
+    def SetMotorInvert(self, wheel : WheelChannel | SpinWheelChannel, invert : int):
         MotorInvertCheck(invert)
 
         command = 0x51 + wheel.value - 1
         package = DataPackage(self.address, command, invert)
         package.Sent(self.port)
 
-    def ReadMotorBusy(self, wheel : WheelPosition | SpinWheelPosition):
+    def ReadMotorBusy(self, wheel : WheelChannel | SpinWheelChannel):
         # 1 = busy, 0 = target reached
         command = 0x4F + wheel.value - 1
         package = DataPackage(self.address, command)
@@ -177,7 +177,7 @@ class Driver():
     # =====================
     # Servo
     # =====================
-    def SetServoSpeed(self, servo : ServoPosition, servo_speed : int):
+    def SetServoSpeed(self, servo : ServoChannel, servo_speed : int):
         ServoSpeedCheck(servo_speed)
 
         command = 0x28 + servo.value - 1
@@ -211,7 +211,7 @@ class Driver():
         )
         package.Sent()
 
-    def SetServoPosition(self, servo : ServoPosition, servo_position : int):
+    def SetServoPosition(self, servo : ServoChannel, servo_position : int):
         ServoPositionCheck(servo_position)
 
         command = 0x2F + servo.value - 1
@@ -260,18 +260,18 @@ if __name__ == "__main__":
     # print(servo_driver.ReadBatteryVoltage())
     # print(spin_wheel_driver.ReadBatteryVoltage())
 
-    # spin_wheel_driver.SetMotorPower(SpinWheelPosition.LEFT, 100)
-    left_motor_driver.SetMotorPower(WheelPosition.FRONT, 15)
-    left_motor_driver.SetMotorPower(WheelPosition.REAR, 15)
-    right_motor_driver.SetMotorPower(WheelPosition.FRONT, 15)
-    right_motor_driver.SetMotorPower(WheelPosition.REAR, 15)
+    # spin_wheel_driver.SetMotorPower(SpinWheelChannel.LEFT, 100)
+    left_motor_driver.SetMotorPower(WheelChannel.FRONT, 15)
+    left_motor_driver.SetMotorPower(WheelChannel.REAR, 15)
+    right_motor_driver.SetMotorPower(WheelChannel.FRONT, 15)
+    right_motor_driver.SetMotorPower(WheelChannel.REAR, 15)
 
-    # servo_driver.SetServoPosition(ServoPosition.CLAW, 20)
-    # servo_driver.SetServoPosition(ServoPosition.CLAW, 140)
+    # servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
+    # servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
 
-    # servo_driver.SetServoPosition(ServoPosition.TRIGGER, 150)
+    # servo_driver.SetServoPosition(ServoChannel.TRIGGER, 150)
     sleep(1)
-    # servo_driver.SetServoPosition(ServoPosition.TRIGGER, 90)
+    # servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
     
     print("sent")
     sleep(5)
