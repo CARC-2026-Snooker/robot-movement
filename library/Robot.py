@@ -40,6 +40,8 @@ class Robot():
         self.spin_wheel_driver = Driver(Component.PRIZM_MOTOR_DRIVER, self.serial)
         self.servo_driver = Driver(Component.PRIZM_SERVO_DRIVER, self.serial)
 
+        sleep(0)
+
     def Move(self, power : int, direction : Direction):
         multiplier = MapDirectionToWheel(direction)
         self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
@@ -80,42 +82,49 @@ class Robot():
 
 # Test section
 if __name__ == "__main__":
-    constant_power = 10
-    move_time = 1
+    constant_power = 20
+    move_time = 2.5
 
     robot = Robot()
     robot.Move(constant_power, Direction.FRONT)
     sleep(move_time)
+    robot.Break()
+    sleep(move_time)
     robot.Move(constant_power, Direction.LEFT)
     sleep(move_time)
+    robot.Break()
+    sleep(move_time)
     robot.Move(constant_power, Direction.BACK)
+    sleep(move_time)
+    robot.Break()
     sleep(move_time)
     robot.Move(constant_power, Direction.RIGHT)
     sleep(move_time)
     robot.Break()
-
-    robot.Rotate(constant_power, Rotation.LEFT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.RIGHT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.LEFT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.RIGHT)
     sleep(move_time)
 
-    robot.OpenClaw()
-    sleep(move_time)
-    robot.CloseClaw()
-    sleep(move_time)
+    # robot.Rotate(constant_power, Rotation.LEFT)
+    # sleep(move_time)
+    # robot.Rotate(constant_power, Rotation.RIGHT)
+    # sleep(move_time)
+    # robot.Rotate(constant_power, Rotation.LEFT)
+    # sleep(move_time)
+    # robot.Rotate(constant_power, Rotation.RIGHT)
+    # sleep(move_time)
 
-    robot.ReleaseTrigger()
-    sleep(move_time)
-    robot.ResetTrigger()
-    sleep(move_time)
+    # robot.OpenClaw()
+    # sleep(move_time)
+    # robot.CloseClaw()
+    # sleep(move_time)
 
-    robot.RevUpSpinWheel(20)
-    sleep(move_time)
-    robot.StopSpinWheel()
-    sleep(move_time)
+    # robot.ReleaseTrigger()
+    # sleep(move_time)
+    # robot.ResetTrigger()
+    # sleep(move_time)
+
+    # robot.RevUpSpinWheel(20)
+    # sleep(move_time)
+    # robot.StopSpinWheel()
+    # sleep(move_time)
 
     robot.Stop()
