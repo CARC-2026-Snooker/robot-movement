@@ -15,13 +15,13 @@ class Rotation(Enum):
 def MapDirectionToWheel(direction : Direction):
     # FL FR RL RR
     if direction == Direction.FRONT:
-        return [-1, -1, 1, 1]
-    elif direction == Direction.LEFT:
-        return [1, -1, 1, -1]
-    elif direction == Direction.BACK:
-        return [1, 1, -1, -1]
-    elif direction == Direction.RIGHT:
         return [-1, 1, -1, 1]
+    elif direction == Direction.LEFT:
+        return [1, 1, -1, -1]
+    elif direction == Direction.BACK:
+        return [1, -1, 1, -1]
+    elif direction == Direction.RIGHT:
+        return [-1, -1, 1, 1]
     raise Exception("Unknown direction.")
 def MapRotationToWheel(rotation : Rotation):
     # FL FR RL RR
