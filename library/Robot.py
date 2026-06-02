@@ -13,6 +13,7 @@ class Rotation(Enum):
     RIGHT = 1
 
 def MapDirectionToWheel(direction : Direction):
+    # FL FR RL RR
     if direction == Direction.FRONT:
         return [-1, -1, 1, 1]
     elif direction == Direction.LEFT:
@@ -23,6 +24,7 @@ def MapDirectionToWheel(direction : Direction):
         return [-1, 1, -1, 1]
     raise Exception("Unknown direction.")
 def MapRotationToWheel(rotation : Rotation):
+    # FL FR RL RR
     if rotation == Direction.LEFT:
         return [1, 1, 1, 1]
     elif rotation == Direction.RIGHT:
@@ -40,8 +42,8 @@ class Robot():
 
     def Move(self, power : int, direction : Direction):
         multiplier = MapDirectionToWheel(direction)
-        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[1])
-        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[2])
+        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
+        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
@@ -50,8 +52,8 @@ class Robot():
         self.right_wheel_driver.ResetEncdoers()
         
         multiplier = MapRotationToWheel(rotation)
-        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[1])
-        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[2])
+        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
+        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
         
         degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
         while abs(degree) < 90:
