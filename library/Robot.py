@@ -51,7 +51,7 @@ class Robot():
         self.right_wheel_driver.SetMotorPowers(125, 125)
     def Rotate(self, power : int, rotation : Rotation):
         self.left_wheel_driver.ResetEncoders()
-        self.right_wheel_driver.ResetEnc0ders()
+        self.right_wheel_driver.ResetEncoders()
         
         multiplier = MapRotationToWheel(rotation)
         self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
