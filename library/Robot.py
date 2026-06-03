@@ -83,8 +83,13 @@ class Robot():
     def StopSpinWheelSpeed(self):
         self.RevUpSpinWheelSpeed(0)
 
-    # def ReadBattery(self):
-    #     return [self.]
+    def ReadBattery(self):
+        return [
+            self.left_wheel_driver.ReadBatteryVoltage(),
+            self.right_wheel_driver.ReadBatteryVoltage(),
+            self.spin_wheel_driver.ReadBatteryVoltage(),
+            self.servo_driver.ReadBatteryVoltage(),
+        ]
 
     def Stop(self):
         self.serial.close()
@@ -102,26 +107,27 @@ if __name__ == "__main__":
     # robot.StopSpinWheelSpeed()
     # robot.CloseClaw()
 
-    robot.Move(20, Direction.FRONT)
-    sleep(2)
-    robot.Break()
-    sleep(2)
+    # robot.Move(20, Direction.FRONT)
+    # sleep(2)
+    # robot.Break()
+    # sleep(2)
 
-    robot.Move(20, Direction.LEFT)
-    sleep(2)
-    robot.Break()
-    sleep(2)
+    # robot.Move(20, Direction.LEFT)
+    # sleep(2)
+    # robot.Break()
+    # sleep(2)
 
-    robot.Move(20, Direction.BACK)
-    sleep(2)
-    robot.Break()
-    sleep(2)
+    # robot.Move(20, Direction.BACK)
+    # sleep(2)
+    # robot.Break()
+    # sleep(2)
 
-    robot.Move(20, Direction.RIGHT)
-    sleep(2)
-    robot.Break()
-    sleep(2)
+    # robot.Move(20, Direction.RIGHT)
+    # sleep(2)
+    # robot.Break()
+    # sleep(2)
 
+    print(robot.ReadBattery())
 
     # robot.Rotate(10, Rotation.RIGHT)
 
