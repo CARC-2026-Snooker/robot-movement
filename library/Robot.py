@@ -103,8 +103,26 @@ if __name__ == "__main__":
     # robot.CloseClaw()
 
     robot.Move(20, Direction.FRONT)
-    sleep(1)
+    sleep(2)
     robot.Break()
+    sleep(2)
+
+    robot.Move(20, Direction.LEFT)
+    sleep(2)
+    robot.Break()
+    sleep(2)
+
+    robot.Move(20, Direction.BACK)
+    sleep(2)
+    robot.Break()
+    sleep(2)
+
+    robot.Move(20, Direction.RIGHT)
+    sleep(2)
+    robot.Break()
+    sleep(2)
+
+
     # robot.Rotate(10, Rotation.RIGHT)
 
     robot.Stop()
