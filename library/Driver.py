@@ -180,7 +180,7 @@ class Driver():
     def ReadEncoderCount(self, wheel : WheelChannel):
         command = 0x49 + wheel.value - 1
         package = DataPackage(self.address, command)
-        data = package.Sent(self.port, 4)
+        data = package.Sent(self.port, 1, 4)
         count = data[0]
         count = count * 256 + data[1]
         count = count * 256 + data[2]

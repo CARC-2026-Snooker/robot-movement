@@ -56,13 +56,11 @@ class Robot():
         multiplier = MapRotationToWheel(rotation)
         self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
         self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
-        
-        degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
-        print(degree)
+
+        degree = 0
         while abs(degree) < 90:
-            degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
-        print(degree)
-        self.Break() 
+            degree = UnsignedToSigned(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
+        self.Break()
 
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
@@ -109,10 +107,31 @@ if __name__ == "__main__":
     # robot.StopSpinWheelSpeed()
     # robot.CloseClaw()
 
-    # robot.Move(20, Direction.FRONT)
-    # sleep(2)
-    # robot.Break()
-    # sleep(2)
+    robot.left_wheel_driver.ResetEncoders()
+    robot.right_wheel_driver.ResetEncoders()
+    for i in range(10):
+        print(" - ", i)
+        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT))  # -1 down
+        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)) #  1 up
+        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR))   # -1 down
+        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR))  #  1 up
+        robot.Move(20, Direction.FRONT)
+        sleep(2)
+        robot.Break()
+        sleep(2)
+
+    robot.left_wheel_driver.ResetEncoders()
+    robot.right_wheel_driver.ResetEncoders()
+    for i in range(10):
+        print(" - ", i)
+        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT))  #  1 up
+        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)) # -1 down
+        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR))   #  1 up
+        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR))  # -1 down
+        robot.Move(20, Direction.BACK)
+        sleep(2)
+        robot.Break()
+        sleep(2)
 
     # robot.Move(20, Direction.LEFT)
     # sleep(2)
@@ -129,8 +148,9 @@ if __name__ == "__main__":
     # robot.Break()
     # sleep(2)
 
-    print(robot.ReadBattery())
+    # print(robot.ReadBattery())
+    # print(robot.spin_wheel_driver.ReadEncoderDegrees(SpinWheelChannel.LEFT))
 
-    robot.Rotate(10, Rotation.RIGHT)
+    # robot.Rotate(10, Rotation.RIGHT)
 
     robot.Stop()

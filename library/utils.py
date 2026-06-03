@@ -6,6 +6,10 @@ def LowByte(number : int):
 def HighByte(number : int):
     return number >> 24 & 0xFF
 
+def UnsignedToSigned(number : int, width : int):
+    return number if number < (1 << (width - 1)) else number - (1 << width)
+
+
 # Data comunication
 class DataPackage():
     def __init__(self, address, command, *args):
@@ -28,3 +32,6 @@ class DataPackage():
         if return_bytes > 0:
             return port.read(return_bytes)
         return None
+    
+if __name__ == "__main__":
+    print(UnsignedToSigned(0, 32))
