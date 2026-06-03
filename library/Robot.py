@@ -129,6 +129,6 @@ if __name__ == "__main__":
 
     print(robot.ReadBattery())
 
-    # robot.Rotate(10, Rotation.RIGHT)
+    robot.Rotate(10, Rotation.RIGHT)
 
     robot.Stop()
