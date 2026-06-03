@@ -61,7 +61,7 @@ class Driver():
     # =====================
     # Motor
     # =====================
-    def SetMot>orPower(self, wheel : WheelChannel | SpinWheelChannel, power : int):
+    def SetMotorPower(self, wheel : WheelChannel | SpinWheelChannel, power : int):
         MotorPowerCheck(power)
 
         command = 0x40 + wheel.value - 1
