@@ -61,7 +61,7 @@ class Driver():
     # =====================
     # Motor
     # =====================
-    def SetMotorPower(self, wheel : WheelChannel | SpinWheelChannel, power : int):
+    def SetMot>orPower(self, wheel : WheelChannel | SpinWheelChannel, power : int):
         MotorPowerCheck(power)
 
         command = 0x40 + wheel.value - 1
@@ -189,7 +189,7 @@ class Driver():
     def ReadEncoderDegrees(self, wheel : WheelChannel):
         command = 0x5B + wheel.value - 1
         package = DataPackage(self.address, command)
-        data = package.Sent(self.port, 4)
+        data = package.Sent(self.port, 1, 4)
         degree = data[0]
         degree = degree * 256 + data[1]
         degree = degree * 256 + data[2]
