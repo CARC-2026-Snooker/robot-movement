@@ -13,10 +13,18 @@ class DataPackage():
         self.command = command
         self.args = args
 
-    def Sent(self, port : Serial, return_bytes : int = 0):
-        package = [self.address, self.command, *self.args]
+    def Sent(self, port : Serial, byte_per_argument : int = 1, return_bytes : int = 0):
+        package = [self.address, self.command]
+        for arg in self.args:
+
+            reverse_list = []
+            for i in range(byte_per_argument):
+                reverse_list.append((arg >> (8 * i)) & 0xFF)
+            reverse_list.reverse()
+            package.extend(reverse_list)
+
         for data in package:
-            port.write((data & 0xFF).to_bytes(1, byteorder="big"))
+            port.write(data.to_bytes(1, byteorder="big"))
         if return_bytes > 0:
             return port.read(return_bytes)
         return None

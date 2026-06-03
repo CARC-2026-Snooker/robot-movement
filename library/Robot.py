@@ -25,9 +25,9 @@ def MapDirectionToWheel(direction : Direction):
     raise Exception("Unknown direction.")
 def MapRotationToWheel(rotation : Rotation):
     # FL FR RL RR
-    if rotation == Direction.LEFT:
+    if rotation == Rotation.LEFT:
         return [1, 1, 1, 1]
-    elif rotation == Direction.RIGHT:
+    elif rotation == Rotation.RIGHT:
         return [-1, -1, -1, -1]
     raise Exception("Unknown rotation.")
 
@@ -38,7 +38,7 @@ class Robot():
         self.left_wheel_driver = Driver(Component.LEFT_MOTOR_DRIVER, self.serial)
         self.right_wheel_driver = Driver(Component.RIGHT_MOTOR_DRIVER, self.serial)
         self.spin_wheel_driver = Driver(Component.PRIZM_MOTOR_DRIVER, self.serial)
-        self.servo_driver = Driver(Component.PRIZM_SERVO_DRIVER, self.serial)
+        self.servo_driver = Driver(Component.SERVO_DRIVER, self.serial)
 
         sleep(2)
 
@@ -63,68 +63,48 @@ class Robot():
         self.Break() 
 
     def OpenClaw(self):
-        servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
     def CloseClaw(self):
-        servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
     def ReleaseTrigger(self):
-        servo_driver.SetServoPosition(ServoChannel.TRIGGER, 150)
+        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
     def ResetTrigger(self):
-        servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
+        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 150)
 
-    def RevUpSpinWheel(self, power : int):
-        spin_direction = [-1, 1] # Counter clock wise for left, clock wise for right
-        spin_wheel_driver.SetMotorPowers(power * spin_direction[0], power * spin_direction[1])
-    def StopSpinWheel(self):
-        self.RevUpSpinWheel(0)
+    def RevUpSpinWheelPower(self, power : int):
+        spin_direction = [1, -1] # Counter clock wise for left, clock wise for right
+        self.spin_wheel_driver.SetMotorPowers(power * spin_direction[0], power * spin_direction[1])
+    def StopSpinWheelPower(self):
+        self.RevUpSpinWheelPower(0)
+
+    def RevUpSpinWheelSpeed(self, speed : int):
+        spin_direction = [1, -1] # Counter clock wise for left, clock wise for right
+        self.spin_wheel_driver.SetMotorSpeeds(speed * spin_direction[0], speed * spin_direction[1])
+    def StopSpinWheelSpeed(self):
+        self.RevUpSpinWheelSpeed(0)
+
+    # def ReadBattery(self):
+    #     return [self.]
 
     def Stop(self):
         self.serial.close()
 
 # Test section
 if __name__ == "__main__":
-    constant_power = 20
-    move_time = 2.5
-
     robot = Robot()
-    robot.Move(constant_power, Direction.FRONT)
-    sleep(move_time)
-    robot.Break()
-    sleep(move_time)
-    robot.Move(constant_power, Direction.LEFT)
-    sleep(move_time)
-    robot.Break()
-    sleep(move_time)
-    robot.Move(constant_power, Direction.BACK)
-    sleep(move_time)
-    robot.Break()
-    sleep(move_time)
-    robot.Move(constant_power, Direction.RIGHT)
-    sleep(move_time)
-    robot.Break()
-    sleep(move_time)
 
-    robot.Rotate(constant_power, Rotation.LEFT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.RIGHT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.LEFT)
-    sleep(move_time)
-    robot.Rotate(constant_power, Rotation.RIGHT)
-    sleep(move_time)
+    # robot.OpenClaw()
+    # robot.RevUpSpinWheelSpeed(120)
+    # sleep(1)
+    # robot.ReleaseTrigger()
+    # sleep(15)
+    # robot.ResetTrigger()
+    # robot.StopSpinWheelSpeed()
+    # robot.CloseClaw()
 
-    robot.OpenClaw()
-    sleep(move_time)
-    robot.CloseClaw()
-    sleep(move_time)
-
-    robot.ReleaseTrigger()
-    sleep(move_time)
-    robot.ResetTrigger()
-    sleep(move_time)
-
-    robot.RevUpSpinWheel(20)
-    sleep(move_time)
-    robot.StopSpinWheel()
-    sleep(move_time)
+    robot.Move(20, Direction.FRONT)
+    sleep(1)
+    robot.Break()
+    # robot.Rotate(10, Rotation.RIGHT)
 
     robot.Stop()

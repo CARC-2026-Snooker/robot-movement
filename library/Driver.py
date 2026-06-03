@@ -7,7 +7,7 @@ from utils import *
 class Component(Enum):
     LEFT_MOTOR_DRIVER = 1
     RIGHT_MOTOR_DRIVER = 2
-    SERVO_DRIVER = 4
+    SERVO_DRIVER = 3
     PRIZM_MOTOR_DRIVER = 5
     PRIZM_SERVO_DRIVER = 6
 class WheelChannel(Enum):
@@ -55,7 +55,7 @@ class Driver():
 
     def ReadBatteryVoltage(self):
         package = DataPackage(self.address, 0x53)
-        data = package.Sent(self.port, 2)
+        data = package.Sent(self.port, 1, 2)
         return data[0] * 256 + data[1]
 
     # =====================
@@ -79,13 +79,13 @@ class Driver():
 
         command = 0x43 + wheel.value - 1
         package = DataPackage(self.address, command, speed)
-        package.Sent(self.port)
+        package.Sent(self.port, 2)
     def SetMotorSpeeds(self, speed_1 : int, speed_2 : int):
         MotorSpeedCheck(speed_1)
         MotorSpeedCheck(speed_2)
         
         package = DataPackage(self.address, 0x45, speed_1, speed_2)
-        package.Sent(self.port)
+        package.Sent(self.port, 2)
 
     def SetMotorTarget(self, wheel : WheelChannel | SpinWheelChannel, speed : int, target : int):
         MotorAbsSpeedCheck(speed)
@@ -172,7 +172,7 @@ class Driver():
         # 1 = busy, 0 = target reached
         command = 0x4F + wheel.value - 1
         package = DataPackage(self.address, command)
-        return package.Sent(self.port, 1)
+        return package.Sent(self.port, 1, 1)
 
     # =====================
     # Encoder
