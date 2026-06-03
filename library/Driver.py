@@ -199,7 +199,7 @@ class Driver():
         command = 0x4C + wheel.value - 1
         package = DataPackage(self.address, command)
         package.Sent(self.port)
-    def ResetEncdoers(self):
+    def ResetEncoders(self):
         package = DataPackage(self.address, 0x4E)
         package.Sent(self.port)
 

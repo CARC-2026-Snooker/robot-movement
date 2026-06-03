@@ -50,16 +50,18 @@ class Robot():
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
     def Rotate(self, power : int, rotation : Rotation):
-        self.left_wheel_driver.ResetEncdoers()
-        self.right_wheel_driver.ResetEncdoers()
+        self.left_wheel_driver.ResetEncoders()
+        self.right_wheel_driver.ResetEnc0ders()
         
         multiplier = MapRotationToWheel(rotation)
         self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
         self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
         
         degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
+        print(degree)
         while abs(degree) < 90:
             degree = self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT)
+        print(degree)
         self.Break() 
 
     def OpenClaw(self):
