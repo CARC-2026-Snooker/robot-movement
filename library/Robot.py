@@ -58,18 +58,33 @@ class Robot():
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
-    def Rotate(self, power : int, rotation : Rotation):
-        self.left_wheel_driver.ResetEncoders()
-        self.right_wheel_driver.ResetEncoders()
+    def Rotate(self, speed : int, rotation : Rotation):
+        # self.left_wheel_driver.ResetEncoders()
+        # self.right_wheel_driver.ResetEncoders()
         
-        multiplier = MapRotationToWheel(rotation)
-        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
-        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
+        # multiplier = MapRotationToWheel(rotation)
+        # self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
+        # self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
 
-        degree = 0
-        while degree < 90:
-            degree = abs(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
-        self.Break()
+        # degree = 0
+        # while degree < 90:
+        #     degree = abs(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
+        # self.Break()
+
+        multiplier = MapRotationToWheel(rotation)
+
+        fl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        fr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        rl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+        rr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+
+        self.left_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[0], speed, 1320 * multiplier[2])
+        self.right_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[1], speed, 1320 * multiplier[3])
+        while (self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
+               self.left_wheel_driver.ReadMotorBusy(WheelChannel.REAR) or 
+               self.right_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
+               self.right_wheel_driver.ReadMotorBusy(WheelChannel.REAR)):
+            sleep(0.1)
 
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
@@ -134,6 +149,6 @@ if __name__ == "__main__":
 
     # print(robot.spin_wheel_driver.ReadEncoderDegrees(SpinWheelChannel.LEFT))
 
-    # robot.Rotate(10, Rotation.RIGHT)
+    robot.Rotate(100, Rotation.RIGHT)
 
     robot.Stop()

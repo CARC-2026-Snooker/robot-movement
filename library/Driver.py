@@ -94,10 +94,10 @@ class Driver():
         arguments = [
             HighByte(speed),
             LowByte(speed),
-            target & 0xFF,
-            target >> 8 & 0xFF,
-            target >> 16 & 0xFF,
             target >> 24 & 0xFF,
+            target >> 16 & 0xFF,
+            target >> 8 & 0xFF,
+            target & 0xFF,
         ]
         package = DataPackage(self.address, command, *arguments)
         package.Sent(self.port)
@@ -108,20 +108,21 @@ class Driver():
         arguments_1 = [
             HighByte(speed_1),
             LowByte(speed_1),
-            target_1 & 0xFF,
-            target_1 >> 8 & 0xFF,
-            target_1 >> 16 & 0xFF,
             target_1 >> 24 & 0xFF,
+            target_1 >> 16 & 0xFF,
+            target_1 >> 8 & 0xFF,
+            target_1 & 0xFF,
         ]
         arguments_2 = [
             HighByte(speed_2),
             LowByte(speed_2),
-            target_2 & 0xFF,
-            target_2 >> 8 & 0xFF,
-            target_2 >> 16 & 0xFF,
             target_2 >> 24 & 0xFF,
+            target_2 >> 16 & 0xFF,
+            target_2 >> 8 & 0xFF,
+            target_2 & 0xFF,
         ]
-        package = DataPackage(self.address, 0x48, *arguments_1.extend(arguments_2))
+        arguments_1.extend(arguments_2)
+        package = DataPackage(self.address, 0x48, *arguments_1)
         package.Sent(self.port)
 
     def SetMotorDegree(self, wheel : WheelChannel | SpinWheelChannel, speed : int, degree : int):
@@ -169,10 +170,9 @@ class Driver():
         package.Sent(self.port)
 
     def ReadMotorBusy(self, wheel : WheelChannel | SpinWheelChannel):
-        # 1 = busy, 0 = target reached
         command = 0x4F + wheel.value - 1
         package = DataPackage(self.address, command)
-        return package.Sent(self.port, 1, 1)
+        return package.Sent(self.port, 1, 1) == b'\x01'
 
     # =====================
     # Encoder
