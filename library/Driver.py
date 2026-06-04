@@ -56,7 +56,7 @@ class Driver():
     def ReadBatteryVoltage(self):
         package = DataPackage(self.address, 0x53)
         data = package.Sent(self.port, 1, 2)
-        return data[0] * 256 + data[1]
+        return int(data[0]) * 256 + int(data[1])
 
     # =====================
     # Motor
