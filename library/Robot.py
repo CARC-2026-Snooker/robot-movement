@@ -84,6 +84,11 @@ class Robot():
             rl /= max_val
             rr /= max_val
 
+        fl = round(fl)
+        fr = round(fr)
+        rl = round(rl)
+        rr = round(rr)
+
         self.left_wheel_driver.SetMotorPowers(fl, rl)
         self.right_wheel_driver.SetMotorPowers(fr, rr)
 
