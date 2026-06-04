@@ -1,3 +1,4 @@
+import math
 from enum import Enum
 from time import sleep
 from serial import Serial
@@ -51,26 +52,45 @@ class Robot():
         
         print("Finish initialization, ready for shooting.")
 
-    def Move(self, power : int, direction : Direction):
-        multiplier = MapDirectionToWheel(direction)
-        self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
-        self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
+    # def Move(self, power : int, direction : Direction):
+    #     multiplier = MapDirectionToWheel(direction)
+    #     self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
+    #     self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
+    def Move(self, power : int, degree : int):
+        #       0
+        # 270        90
+        #      180
+        vX = power * math.cos(degree)
+        vY = power * math.sin(degree)
+        vR = 0
+        self.OmniMovement(vX, vY, vR)
+    def OmniMovement(self, vX : int, vY : int, vR : int):
+        """
+        vX: Velocity in x axis (range from -100 to 100)\n
+        vY: Velocity in y axis (range from -100 to 100)\n
+        vR: Angular velocity (range from -100 to 100)\n
+
+        All parameter with range of -100 to 100, is scaling of motor's maximum power.
+        """
+        fl = vY + vX + vR
+        fr = vY - vX - vR
+        rl = vY - vX + vR
+        rr = vY + vX - vR
+
+        max_val = max(abs(fl), abs(fr), abs(rl), abs(rr))
+        if max_val > 100:
+            fl /= max_val
+            fr /= max_val
+            rl /= max_val
+            rr /= max_val
+
+        self.left_wheel_driver.SetMotorPowers(fl, rl)
+        self.right_wheel_driver.SetMotorPowers(fr, rr)
+
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
     def Rotate(self, speed : int, rotation : Rotation):
-        # self.left_wheel_driver.ResetEncoders()
-        # self.right_wheel_driver.ResetEncoders()
-        
-        # multiplier = MapRotationToWheel(rotation)
-        # self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
-        # self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
-
-        # degree = 0
-        # while degree < 90:
-        #     degree = abs(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
-        # self.Break()
-
         multiplier = MapRotationToWheel(rotation)
 
         fl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
@@ -121,34 +141,8 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot()
 
-    print(robot.ReadBattery())
-    
-    # robot.OpenClaw()
-    # # robot.RevUpSpinWheelSpeed(180)
-    # sleep(1)
-    # robot.ReleaseTrigger()
-    # sleep(5)
-    # robot.ResetTrigger()
-    # # robot.StopSpinWheelSpeed()
-    # robot.CloseClaw()
-
-    # robot.Move(20, Direction.LEFT)
-    # sleep(2)
-    # robot.Break()
-    # sleep(2)
-
-    # robot.Move(20, Direction.BACK)
-    # sleep(2)
-    # robot.Break()
-    # sleep(2)
-
-    # robot.Move(20, Direction.RIGHT)
-    # sleep(2)
-    # robot.Break()
-    # sleep(2)
-
-    # print(robot.spin_wheel_driver.ReadEncoderDegrees(SpinWheelChannel.LEFT))
-
-    robot.Rotate(100, Rotation.RIGHT)
+    robot.Move(20, 90)
+    sleep(2)
+    robot.Break()
 
     robot.Stop()
