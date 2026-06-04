@@ -4,34 +4,6 @@ from time import sleep
 from serial import Serial
 from Driver import *
 
-class Direction(Enum):
-    FRONT = 0
-    LEFT = 1
-    BACK = 2
-    RIGHT = 3
-class Rotation(Enum):
-    LEFT = 0
-    RIGHT = 1
-
-def MapDirectionToWheel(direction : Direction):
-    # FL FR RL RR
-    if direction == Direction.FRONT:
-        return [-1, 1, -1, 1]
-    elif direction == Direction.LEFT:
-        return [1, 1, -1, -1]
-    elif direction == Direction.BACK:
-        return [1, -1, 1, -1]
-    elif direction == Direction.RIGHT:
-        return [-1, -1, 1, 1]
-    raise Exception("Unknown direction.")
-def MapRotationToWheel(rotation : Rotation):
-    # FL FR RL RR
-    if rotation == Rotation.LEFT:
-        return [1, 1, 1, 1]
-    elif rotation == Rotation.RIGHT:
-        return [-1, -1, -1, -1]
-    raise Exception("Unknown rotation.")
-
 class Robot():
     def __init__(self, serial_port : str = "/dev/ttyUSB0", baudrate : int = 1000000):
         self.serial = Serial(serial_port, baudrate)
@@ -40,6 +12,10 @@ class Robot():
         self.right_wheel_driver = Driver(Component.RIGHT_MOTOR_DRIVER, self.serial)
         self.spin_wheel_driver = Driver(Component.PRIZM_MOTOR_DRIVER, self.serial)
         self.servo_driver = Driver(Component.SERVO_DRIVER, self.serial)
+
+        self.wheel_radius = 10.225 # cm
+        self.length = 27.753 # cm
+        self.width = 27.753 # cm
 
         # Waiting for serial to initialize
         sleep(2)
@@ -52,33 +28,21 @@ class Robot():
         
         print("Finish initialization, ready for shooting.")
 
-    # def Move(self, power : int, direction : Direction):
-    #     multiplier = MapDirectionToWheel(direction)
-    #     self.left_wheel_driver.SetMotorPowers(power * multiplier[0], power * multiplier[2])
-    #     self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
-    def Move(self, power : int, degree : int):
-        #       0
-        # 270        90
-        #      180
-        vX = power * math.cos(degree)
-        vY = power * math.sin(degree)
-        vR = 0
-        self.OmniMovement(vX, vY, vR)
     def OmniMovement(self, vX : int, vY : int, vR : int):
         """
-        vX: Velocity in x axis (range from -100 to 100)\n
-        vY: Velocity in y axis (range from -100 to 100)\n
-        vR: Angular velocity (range from -100 to 100)\n
+        vX: Velocity in x axis (range from -720 to 720)\n
+        vY: Velocity in y axis (range from -720 to 720)\n
+        vR: Angular velocity (range from -720 to 720)\n
 
-        All parameter with range of -100 to 100, is scaling of motor's maximum power.
+        All velocity parameters have unit of degree per second.
         """
-        fl = vY + vX + vR
-        fr = vY - vX - vR
-        rl = vY - vX + vR
-        rr = vY + vX - vR
+        fl = -( vY + vX + vR)
+        fr = -(-vY + vX + vR)
+        rl = -( vY - vX + vR)
+        rr = -(-vY - vX + vR)
 
         max_val = max(abs(fl), abs(fr), abs(rl), abs(rr))
-        if max_val > 100:
+        if max_val > 720:
             fl /= max_val
             fr /= max_val
             rl /= max_val
@@ -89,26 +53,43 @@ class Robot():
         rl = round(rl)
         rr = round(rr)
 
-        self.left_wheel_driver.SetMotorPowers(fl, rl)
-        self.right_wheel_driver.SetMotorPowers(fr, rr)
-
+        self.left_wheel_driver.SetMotorSpeeds(fl, rl)
+        self.right_wheel_driver.SetMotorSpeeds(fr, rr)
+    def Move(self, movement_speed : int, movement_degree : int, rotation_speed : int):
+        #       0
+        # 270   ^    90
+        #      180
+        vX = movement_speed * math.cos(movement_degree)
+        vY = movement_speed * math.sin(movement_degree)
+        self.OmniMovement(vX, vY, rotation_speed)
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
         self.right_wheel_driver.SetMotorPowers(125, 125)
-    def Rotate(self, speed : int, rotation : Rotation):
-        multiplier = MapRotationToWheel(rotation)
+    def Rotate(self, speed : int, degree : int):
+        """
+        For stationary rotating.
+        """
+        # multiplier = MapRotationToWheel(rotation)
 
-        fl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
-        fr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
-        rl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
-        rr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+        # fl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        # fr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        # rl_count = self.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+        # rr_count = self.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
 
-        self.left_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[0], speed, 1320 * multiplier[2])
-        self.right_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[1], speed, 1320 * multiplier[3])
-        while (self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
-               self.left_wheel_driver.ReadMotorBusy(WheelChannel.REAR) or 
-               self.right_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
-               self.right_wheel_driver.ReadMotorBusy(WheelChannel.REAR)):
+        # self.left_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[0], speed, 1320 * multiplier[2])
+        # self.right_wheel_driver.SetMotorTargets(speed, 1320 * multiplier[1], speed, 1320 * multiplier[3])
+        # while (self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
+        #        self.left_wheel_driver.ReadMotorBusy(WheelChannel.REAR) or 
+        #        self.right_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or 
+        #        self.right_wheel_driver.ReadMotorBusy(WheelChannel.REAR)):
+        #     sleep(0.1)
+
+        target = -15 * degree
+        self.left_wheel_driver.SetMotorTargets(speed, target, speed, target)
+        self.right_wheel_driver.SetMotorTargets(speed, target, speed, target)
+
+        # Block all code execution until the robot finish rotating
+        while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
             sleep(0.1)
 
     def OpenClaw(self):
@@ -146,8 +127,11 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot()
 
-    robot.Move(20, 90)
-    sleep(2)
-    robot.Break()
+    print(robot.ReadBattery())
+
+    # robot.Move(20, 45)
+    # robot.OmniMovement(0, 10, )
+    # sleep(2)
+    # robot.Break()
 
     robot.Stop()
