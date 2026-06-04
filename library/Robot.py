@@ -59,8 +59,8 @@ class Robot():
         #       0
         # 270   ^    90
         #      180
-        vX = movement_speed * math.cos(movement_degree)
-        vY = movement_speed * math.sin(movement_degree)
+        vX = movement_speed * math.sin(math.radians(movement_degree)) # need to convert to radians before use for sin/cos
+        vY = movement_speed * math.cos(math.radians(movement_degree))
         self.OmniMovement(vX, vY, rotation_speed)
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
@@ -89,6 +89,7 @@ class Robot():
         self.right_wheel_driver.SetMotorTargets(speed, target, speed, target)
 
         # Block all code execution until the robot finish rotating
+        sleep(0.1) # need this or else it will just pass right through
         while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
             sleep(0.1)
 
@@ -127,11 +128,50 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot()
 
-    print(robot.ReadBattery())
+    # print(robot.ReadBattery())
 
-    # robot.Move(20, 45)
-    # robot.OmniMovement(0, 10, )
+    # robot.Rotate(100, 180)
+    # robot.OmniMovement(35, -30, -200)
     # sleep(2)
-    # robot.Break()
+    # robot.Rotate(200, -90)
+
+    # note to self
+    # robot.Rotate(100, 180) # this is in reference to the start rotating/facing angle (when Robot() is create), so every time we start facing at 0
+    # it is setting the angle in ref to start, not changing the angle by that amount
+    # robot.OmniMovement(0, 0, 80)
+    # sleep(2)
+    # robot.OmniMovement(0, 0, -50)
+    # sleep(2)
+    # and it is not disturbed by anything, it will still lock properly into place
+    # robot.Rotate(100, 90)
+    # robot.Rotate(100, -90)
+
+    robot.OmniMovement(50, 50, 0)
+    sleep(2)
+    robot.OmniMovement(-50, 0, 0)
+    sleep(2)
+    robot.OmniMovement(50, -50, 0)
+    sleep(2)
+    robot.OmniMovement(-50, 0, 0)
+    sleep(2)
+    robot.OmniMovement(0, 0, 45)
+    sleep(2)
+    robot.OmniMovement(0, 0, -45)
+    sleep(2)
+    
+    # robot.Move(50, 90, 0)
+    # sleep(2)
+    # robot.Move(50, 0, 0)
+    # sleep(2)
+    # robot.Move(50, -90, 0)
+    # sleep(2)
+    # robot.Move(50, 180, 0)
+    # sleep(2)
+    # robot.Move(0, 0, 45)
+    # sleep(2)
+    # robot.Move(0, 0, -45)
+    # sleep(2)
+
+    robot.Break()
 
     robot.Stop()
