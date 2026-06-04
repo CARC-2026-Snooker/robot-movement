@@ -40,7 +40,16 @@ class Robot():
         self.spin_wheel_driver = Driver(Component.PRIZM_MOTOR_DRIVER, self.serial)
         self.servo_driver = Driver(Component.SERVO_DRIVER, self.serial)
 
+        # Waiting for serial to initialize
         sleep(2)
+
+        # Battery Checking sequence
+        battery_levels = self.ReadBattery()
+        for driver in battery_levels.keys():
+            if battery_levels[driver] < 11:
+                print(f"WARNING LOW BATTERY ({battery_levels[driver]})")
+        
+        print("Finish initialization, ready for shooting.")
 
     def Move(self, power : int, direction : Direction):
         multiplier = MapDirectionToWheel(direction)
@@ -84,12 +93,11 @@ class Robot():
         self.RevUpSpinWheelSpeed(0)
 
     def ReadBattery(self):
-        return [
-            self.left_wheel_driver.ReadBatteryVoltage(),
-            self.right_wheel_driver.ReadBatteryVoltage(),
-            self.spin_wheel_driver.ReadBatteryVoltage(),
-            self.servo_driver.ReadBatteryVoltage(),
-        ]
+        return {
+            "Left Driver" : self.left_wheel_driver.ReadBatteryVoltage() / 100,
+            "Right Driver" : self.right_wheel_driver.ReadBatteryVoltage() / 100,
+            "Servo Driver" : self.servo_driver.ReadBatteryVoltage() / 100,
+        }
 
     def Stop(self):
         self.serial.close()
@@ -100,14 +108,14 @@ if __name__ == "__main__":
 
     print(robot.ReadBattery())
     
-    robot.OpenClaw()
-    robot.RevUpSpinWheelSpeed(360)
-    sleep(1)
-    robot.ReleaseTrigger()
-    sleep(15)
-    robot.ResetTrigger()
-    robot.StopSpinWheelSpeed()
-    robot.CloseClaw()
+    # robot.OpenClaw()
+    # # robot.RevUpSpinWheelSpeed(180)
+    # sleep(1)
+    # robot.ReleaseTrigger()
+    # sleep(5)
+    # robot.ResetTrigger()
+    # # robot.StopSpinWheelSpeed()
+    # robot.CloseClaw()
 
     # robot.Move(20, Direction.LEFT)
     # sleep(2)
