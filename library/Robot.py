@@ -98,40 +98,16 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot()
 
-    # robot.OpenClaw()
-    # robot.RevUpSpinWheelSpeed(120)
-    # sleep(1)
-    # robot.ReleaseTrigger()
-    # sleep(15)
-    # robot.ResetTrigger()
-    # robot.StopSpinWheelSpeed()
-    # robot.CloseClaw()
-
-    robot.left_wheel_driver.ResetEncoders()
-    robot.right_wheel_driver.ResetEncoders()
-    for i in range(10):
-        print(" - ", i)
-        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT))  # -1 down
-        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)) #  1 up
-        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR))   # -1 down
-        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR))  #  1 up
-        robot.Move(20, Direction.FRONT)
-        sleep(2)
-        robot.Break()
-        sleep(2)
-
-    robot.left_wheel_driver.ResetEncoders()
-    robot.right_wheel_driver.ResetEncoders()
-    for i in range(10):
-        print(" - ", i)
-        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT))  #  1 up
-        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)) # -1 down
-        print("     = ", robot.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR))   #  1 up
-        print("     = ", robot.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR))  # -1 down
-        robot.Move(20, Direction.BACK)
-        sleep(2)
-        robot.Break()
-        sleep(2)
+    print(robot.ReadBattery())
+    
+    robot.OpenClaw()
+    robot.RevUpSpinWheelSpeed(360)
+    sleep(1)
+    robot.ReleaseTrigger()
+    sleep(15)
+    robot.ResetTrigger()
+    robot.StopSpinWheelSpeed()
+    robot.CloseClaw()
 
     # robot.Move(20, Direction.LEFT)
     # sleep(2)
@@ -148,7 +124,6 @@ if __name__ == "__main__":
     # robot.Break()
     # sleep(2)
 
-    # print(robot.ReadBattery())
     # print(robot.spin_wheel_driver.ReadEncoderDegrees(SpinWheelChannel.LEFT))
 
     # robot.Rotate(10, Rotation.RIGHT)
