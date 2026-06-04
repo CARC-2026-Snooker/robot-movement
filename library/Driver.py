@@ -185,6 +185,7 @@ class Driver():
         count = count * 256 + data[1]
         count = count * 256 + data[2]
         count = count * 256 + data[3]
+        count = UnsignedToSigned(count, 32)
         return count
     def ReadEncoderDegrees(self, wheel : WheelChannel):
         command = 0x5B + wheel.value - 1
@@ -194,6 +195,7 @@ class Driver():
         degree = degree * 256 + data[1]
         degree = degree * 256 + data[2]
         degree = degree * 256 + data[3]
+        degree = UnsignedToSigned(degree, 32)
         return degree
     def ResetEncoder(self, wheel : WheelChannel):
         command = 0x4C + wheel.value - 1

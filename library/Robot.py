@@ -58,14 +58,14 @@ class Robot():
         self.right_wheel_driver.SetMotorPowers(power * multiplier[1], power * multiplier[3])
 
         degree = 0
-        while abs(degree) < 90:
-            degree = UnsignedToSigned(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
+        while degree < 90:
+            degree = abs(self.left_wheel_driver.ReadEncoderDegrees(WheelChannel.FRONT))
         self.Break()
 
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
     def CloseClaw(self):
-        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 25)
     def ReleaseTrigger(self):
         self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
     def ResetTrigger(self):
