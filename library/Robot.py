@@ -91,6 +91,16 @@ class Robot():
         # Block all code execution until the robot finish rotating
         while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
             sleep(0.1)
+    def RotateStack(self, speed : int, degree : int):
+        target = -15 * degree
+        lf, lr = left_motor_driver.ReadEncoderDegrees(WheelChannel.FRONT), left_motor_driver.ReadEncoderDegrees(WheelChannel.REAR)
+        rf, rr = right_motor_driver.ReadEncoderDegrees(WheelChannel.FRONT), right_motor_driver.ReadEncoderDegrees(WheelChannel.REAR)
+        self.left_wheel_driver.SetMotorTargets(speed, target + lf, speed + lr, target)
+        self.right_wheel_driver.SetMotorTargets(speed, target + rf, speed + rr, target)
+
+        # Block all code execution until the robot finish rotating
+        while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
+            sleep(0.1)
 
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
