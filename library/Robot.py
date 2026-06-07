@@ -59,8 +59,8 @@ class Robot():
         #       0
         # 270   ^    90
         #      180
-        vX = movement_speed * math.cos(movement_degree)
-        vY = movement_speed * math.sin(movement_degree)
+        vX = movement_speed * math.sin(math.radians(movement_degree)) # need to convert to radians before use for sin/cos
+        vY = movement_speed * math.cos(math.radians(movement_degree))
         self.OmniMovement(vX, vY, rotation_speed)
     def Break(self):
         self.left_wheel_driver.SetMotorPowers(125, 125)
@@ -89,19 +89,35 @@ class Robot():
         self.right_wheel_driver.SetMotorTargets(speed, target, speed, target)
 
         # Block all code execution until the robot finish rotating
+        sleep(0.1)
         while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
             sleep(0.1)
-    def RotateStack(self, speed : int, degree : int):
-        target = -15 * degree
-        lf, lr = left_motor_driver.ReadEncoderDegrees(WheelChannel.FRONT), left_motor_driver.ReadEncoderDegrees(WheelChannel.REAR)
-        rf, rr = right_motor_driver.ReadEncoderDegrees(WheelChannel.FRONT), right_motor_driver.ReadEncoderDegrees(WheelChannel.REAR)
-        self.left_wheel_driver.SetMotorTargets(speed, target + lf, speed + lr, target)
-        self.right_wheel_driver.SetMotorTargets(speed, target + rf, speed + rr, target)
+    def RotateStack(self, speed, degree):
+        delta = -15 * degree
 
-        # Block all code execution until the robot finish rotating
-        while self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT):
+        lf = self.left_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        lr = self.left_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+        rf = self.right_wheel_driver.ReadEncoderCount(WheelChannel.FRONT)
+        rr = self.right_wheel_driver.ReadEncoderCount(WheelChannel.REAR)
+
+        self.left_wheel_driver.SetMotorTargets(
+            speed, lf + delta,
+            speed, lr + delta
+        )
+
+        self.right_wheel_driver.SetMotorTargets(
+            speed, rf + delta,
+            speed, rr + delta
+        )
+
+        sleep(0.1)
+        while (
+            self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or
+            self.left_wheel_driver.ReadMotorBusy(WheelChannel.REAR) or
+            self.right_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or
+            self.right_wheel_driver.ReadMotorBusy(WheelChannel.REAR)
+        ):
             sleep(0.1)
-
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
     def CloseClaw(self):
@@ -139,9 +155,32 @@ if __name__ == "__main__":
 
     print(robot.ReadBattery())
 
-    # robot.Move(20, 45)
-    # robot.OmniMovement(0, 10, )
-    # sleep(2)
+    # robot.Move(100, 0, 200)
+    # # robot.OmniMovement(0, 100, 0)
+    # # robot.RevUpSpinWheelPower(40)
+    # sleep(3)
+    # # robot.ReleaseTrigger()
+    # # sleep(2)
+    # # robot.ResetTrigger()
+    # # robot.StopSpinWheelPower()
     # robot.Break()
+    # sleep(2)
+
+    robot.CloseClaw()
+
+    # robot.RotateStack(100, 180)
+    # # robot.RotateStack(100, 90)
+    # # robot.RotateStack(100, 90)
+    # sleep(2)
+    # # robot.Move(-100, 0, 150)
+    # robot.Break()
+    # sleep(2)
+    # # robot.RotateStack(100, -90)
+    # # robot.RotateStack(100, -90)
+    # robot.RotateStack(100, 90)
+    # # robot.Move(20, 45)
+    # # robot.OmniMovement(0, 10, )
+    # sleep(2)
+    robot.Break()
 
     robot.Stop()
