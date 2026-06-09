@@ -278,7 +278,7 @@ class Driver():
 
 # Test section
 if __name__ == "__main__":
-    serial = Serial("/dev/ttyUSB1", baudrate=1000000, timeout=1)
+    serial = Serial("/dev/motor_controller", baudrate=1000000, timeout=1)
     sleep(4)
 
     left_motor_driver = Driver(Component.LEFT_MOTOR_DRIVER, serial)

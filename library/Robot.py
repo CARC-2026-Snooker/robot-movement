@@ -5,7 +5,7 @@ from serial import Serial
 from Driver import *
 
 class Robot():
-    def __init__(self, serial_port : str = "/dev/ttyUSB0", baudrate : int = 1000000):
+    def __init__(self, serial_port : str = "/dev/motor_controller", baudrate : int = 1000000):
         self.serial = Serial(serial_port, baudrate)
 
         self.left_wheel_driver = Driver(Component.LEFT_MOTOR_DRIVER, self.serial)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
 
     print(robot.ReadBattery())
 
-    # robot.Move(100, 0, 200)
+    # robot.Move(400, 0, 20)
     # # robot.OmniMovement(0, 100, 0)
     # # robot.RevUpSpinWheelPower(40)
     # sleep(3)
@@ -166,7 +166,9 @@ if __name__ == "__main__":
     # robot.Break()
     # sleep(2)
 
-    robot.CloseClaw()
+    # robot.OpenClaw()
+    # sleep(1.9)
+    # robot.CloseClaw()
 
     # robot.RotateStack(100, 180)
     # # robot.RotateStack(100, 90)
