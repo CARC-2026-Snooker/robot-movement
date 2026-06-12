@@ -5,14 +5,14 @@ from utils import *
 
 # Components and its positioning
 class Component(Enum):
-    LEFT_MOTOR_DRIVER = 1
-    RIGHT_MOTOR_DRIVER = 2
+    LEFT_MOTOR_DRIVER = 2
+    RIGHT_MOTOR_DRIVER = 1
     SERVO_DRIVER = 3
     PRIZM_MOTOR_DRIVER = 5
     PRIZM_SERVO_DRIVER = 6
 class WheelChannel(Enum):
-    FRONT = 1
-    REAR = 2
+    FRONT = 2
+    REAR = 1
 class SpinWheelChannel(Enum):
     LEFT = 1
     RIGHT = 2
@@ -278,7 +278,7 @@ class Driver():
 
 # Test section
 if __name__ == "__main__":
-    serial = Serial("/dev/ttyUSB1", baudrate=1000000, timeout=1)
+    serial = Serial("/dev/motor_controller", baudrate=1000000, timeout=1)
     sleep(4)
 
     left_motor_driver = Driver(Component.LEFT_MOTOR_DRIVER, serial)

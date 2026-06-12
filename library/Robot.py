@@ -5,7 +5,7 @@ from serial import Serial
 from Driver import *
 
 class Robot():
-    def __init__(self, serial_port : str = "/dev/ttyUSB0", baudrate : int = 1000000):
+    def __init__(self, serial_port : str = "/dev/motor_controller", baudrate : int = 1000000):
         self.serial = Serial(serial_port, baudrate)
 
         self.left_wheel_driver = Driver(Component.LEFT_MOTOR_DRIVER, self.serial)
@@ -110,6 +110,7 @@ class Robot():
             speed, rr + delta
         )
 
+        print("rotatig now")
         sleep(0.1)
         while (
             self.left_wheel_driver.ReadMotorBusy(WheelChannel.FRONT) or
@@ -118,14 +119,16 @@ class Robot():
             self.right_wheel_driver.ReadMotorBusy(WheelChannel.REAR)
         ):
             sleep(0.1)
+            print("actually rotating")
+        print("done")
     def OpenClaw(self):
-        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 150)
     def CloseClaw(self):
-        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 25)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 50)
     def ReleaseTrigger(self):
-        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
+        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 80)
     def ResetTrigger(self):
-        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 150)
+        self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 140)
 
     def RevUpSpinWheelPower(self, power : int):
         spin_direction = [1, -1] # Counter clock wise for left, clock wise for right
@@ -155,23 +158,28 @@ if __name__ == "__main__":
 
     print(robot.ReadBattery())
 
-    # robot.Move(100, 0, 200)
-    # # robot.OmniMovement(0, 100, 0)
-    # # robot.RevUpSpinWheelPower(40)
+    # robot.OpenClaw()
     # sleep(3)
-    # # robot.ReleaseTrigger()
-    # # sleep(2)
-    # # robot.ResetTrigger()
-    # # robot.StopSpinWheelPower()
+    # robot.CloseClaw()
+
+    # robot.Move(0, 0, 200)
+    robot.OmniMovement(0, 0, 0)
     # robot.Break()
+    # robot.RevUpSpinWheelPower(70)
+    sleep(0.3)
+    # robot.ReleaseTrigger()
+    # sleep(2)
+    # robot.ResetTrigger()
+    # robot.StopSpinWheelPower()
+    robot.Break()
     # sleep(2)
 
-    robot.CloseClaw()
+    # robot.OpenClaw()
 
     # robot.RotateStack(100, 180)
-    # # robot.RotateStack(100, 90)
-    # # robot.RotateStack(100, 90)
-    # sleep(2)
+    robot.RotateStack(100, -90)
+    robot.RotateStack(100, 90)
+    sleep(2)
     # # robot.Move(-100, 0, 150)
     # robot.Break()
     # sleep(2)
