@@ -121,7 +121,7 @@ class Robot():
     def OpenClaw(self):
         self.servo_driver.SetServoPosition(ServoChannel.CLAW, 140)
     def CloseClaw(self):
-        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 25)
+        self.servo_driver.SetServoPosition(ServoChannel.CLAW, 20)
     def ReleaseTrigger(self):
         self.servo_driver.SetServoPosition(ServoChannel.TRIGGER, 90)
     def ResetTrigger(self):
@@ -156,8 +156,8 @@ if __name__ == "__main__":
     print(robot.ReadBattery())
 
     # robot.Move(400, 0, 20)
-    # # robot.OmniMovement(0, 100, 0)
-    # # robot.RevUpSpinWheelPower(40)
+    # robot.OmniMovement(0, 0, 50)
+    # robot.RevUpSpinWheelPower(50)
     # sleep(3)
     # # robot.ReleaseTrigger()
     # # sleep(2)
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     # robot.Break()
     # sleep(2)
 
-    # robot.OpenClaw()
+    robot.OpenClaw()
     # sleep(1.9)
     # robot.CloseClaw()
 
